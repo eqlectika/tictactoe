@@ -89,19 +89,20 @@
     font-size:clamp(14px,3.0vw,14px);
     color:#a89e8a;line-height:1.6;
     padding:10px 16px;
-    border:1px dashed var(--gold-line);
+    border:none;
     border-radius:10px;
     background:#ffffff04;
     text-align:center;
     cursor:pointer;
     user-select:none;
-    transition:max-height .35s ease, padding .35s ease, margin .35s ease, opacity .25s ease, border-color .2s;
+    transition:max-height .35s ease, padding .35s ease, margin .35s ease, opacity .25s ease, background .2s;
     overflow:hidden;
     max-height:340px;
     position:relative;
   }
+  .hint:hover{background:#ffffff08}
+
   .hint:hover{border-color:var(--gold)}
-  .hint:active{background:#ffffff08}
   .hint.collapsed{
     max-height:32px;
     padding:6px 16px;
@@ -184,10 +185,10 @@
     grid-template-columns:repeat(3,var(--cell-size));
     grid-template-rows:repeat(3,var(--cell-size));
     gap:var(--gap);
-    padding:var(--gap);
-    background:var(--panel);
-    border-radius:14px;
-    box-shadow:0 0 0 1px var(--gold-line),0 30px 80px #00000099;
+    padding:0;
+    background:transparent;
+    border-radius:0;
+    box-shadow:none;
     position:relative;
   }
 
@@ -480,12 +481,12 @@
 
 <script>
 const GALLERY = [
-  'gallery/01.jpg','gallery/02.jpg','gallery/03.jpg',
-  'gallery/04.jpg','gallery/05.jpg','gallery/06.jpg',
-  'gallery/07.jpg','gallery/08.jpg','gallery/09.jpg',
-  'gallery/10.jpg','gallery/11.jpg','gallery/12.jpg',
-  'gallery/13.jpg','gallery/14.jpg','gallery/15.jpg',
-  'gallery/16.jpg','gallery/17.jpg','gallery/18.jpg'
+  'gallery/01.AVIF','gallery/02.AVIF','gallery/03.AVIF',
+  'gallery/04.AVIF','gallery/05.AVIF','gallery/06.AVIF',
+  'gallery/07.AVIF','gallery/08.AVIF','gallery/09.AVIF',
+  'gallery/10.AVIF','gallery/11.AVIF','gallery/12.AVIF',
+  'gallery/13.AVIF','gallery/14.AVIF','gallery/15.AVIF',
+  'gallery/16.AVIF','gallery/17.AVIF','gallery/18.AVIF'
 ];
 const X_IMG = 'x.png';
 const O_IMG = '0.png';
