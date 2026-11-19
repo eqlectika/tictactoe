@@ -1,0 +1,11 @@
+{
+  "name": "Gallery + Tic-Tac-Toe",
+  "short_name": "Gallery+TTT",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0a0a0a",
+  "theme_color": "#0a0a0a",
+  "icons": [
+    { "src": "x.png", "sizes": "any", "type": "image/png", "purpose": "any" }
+  ]
+}
