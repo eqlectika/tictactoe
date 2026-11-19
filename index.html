@@ -316,9 +316,9 @@ body{
   .orb{
     position:fixed;z-index:150;
     width:56px;height:56px;border-radius:50%;
-    background:rgba(20, 20, 20, 0.24); /* прозрачный фон самого кружка */
-    backdrop-filter:blur(4px);
-    -webkit-backdrop-filter:blur(4px);
+    background:transparent;
+    backdrop-filter:blur(6px);
+    -webkit-backdrop-filter:blur(6px);
     border:1px solid rgba(212, 175, 55, 0.45);
     display:flex;align-items:center;justify-content:center;
     cursor:grab;touch-action:none;user-select:none;
@@ -334,7 +334,7 @@ body{
     width:52%;height:52%;object-fit:contain;
     pointer-events:none;
     position:relative;z-index:3;
-    opacity:1; /* сам рисунок refresh чёткий */
+    opacity:1;
     transition:opacity .18s ease, transform .18s ease;
   }
 
@@ -373,29 +373,27 @@ body{
     opacity:0;transition:opacity .2s ease;
   }
 
-  /* Над ячейкой — подложка кружка тоже прозрачная, картинка линзы чёткая */
+  /* Над ячейкой */
   .orb.over-cell{
     width:72px;height:72px;
-    background:rgba(10, 10, 10, 0.25);
+    background:transparent;
     opacity:1;
-    border:1.5px solid rgba(212, 175, 55, 0.75);
+    border:1.5px solid var(--gold);
     box-shadow:
-      0 0 22px rgba(212, 175, 55, 0.3),
-      0 8px 24px rgba(0, 0, 0, 0.45);
+      0 0 22px rgba(212, 175, 55, 0.35),
+      0 8px 24px rgba(0, 0, 0, 0.55);
   }
   .orb.over-cell img{
     opacity:0;
     transform:scale(.5);
   }
   .orb.over-cell .orb-lens{
-    opacity:1; /* сама увеличенная картинка в линзе чёткая */
+    opacity:1;
   }
   .orb.over-cell::before,
   .orb.over-cell::after{
     opacity:1;
   }
-
-
 
   /* ============ LIGHTBOX ============ */
   .lightbox{
