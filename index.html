@@ -13,6 +13,11 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Unbounded:wght@300;400;600;700&family=Noto+Sans+Arabic:wght@400;600&family=Noto+Sans+SC:wght@400;600&display=swap" rel="stylesheet">
 <style>
+body{
+  user-select:none;
+  -webkit-user-select:none;
+}
+
   :root{
     --bg:#0a0a0a;
     --panel:#111111;
@@ -311,15 +316,17 @@
   .orb{
     position:fixed;z-index:150;
     width:56px;height:56px;border-radius:50%;
-    background:rgba(20, 20, 20, 0.35); /* полупрозрачный фон везде */
+    background:rgba(20, 20, 20, 0.24); /* прозрачный фон самого кружка */
     backdrop-filter:blur(4px);
     -webkit-backdrop-filter:blur(4px);
     border:1px solid rgba(212, 175, 55, 0.45);
     display:flex;align-items:center;justify-content:center;
     cursor:grab;touch-action:none;user-select:none;
-    opacity:0.78; /* общая полупрозрачность кружка везде */
-    transition:width .22s ease, height .22s ease, background .2s ease, border-color .2s ease, box-shadow .2s ease, opacity .2s ease;
-    box-shadow:0 4px 18px rgba(0, 0, 0, 0.45);
+    -webkit-user-select:none;-webkit-touch-callout:none;
+    outline:none;
+    opacity:1;
+    transition:width .22s ease, height .22s ease, background .2s ease, border-color .2s ease, box-shadow .2s ease;
+    box-shadow:0 4px 18px rgba(0, 0, 0, 0.35);
     overflow:hidden;
   }
   .orb:active{cursor:grabbing}
@@ -327,7 +334,7 @@
     width:52%;height:52%;object-fit:contain;
     pointer-events:none;
     position:relative;z-index:3;
-    opacity:0.85;
+    opacity:1; /* сам рисунок refresh чёткий */
     transition:opacity .18s ease, transform .18s ease;
   }
 
@@ -366,27 +373,28 @@
     opacity:0;transition:opacity .2s ease;
   }
 
-  /* Над ячейкой — тоже полупрозрачный */
+  /* Над ячейкой — подложка кружка тоже прозрачная, картинка линзы чёткая */
   .orb.over-cell{
     width:72px;height:72px;
-    background:rgba(10, 10, 10, 0.35);
-    opacity:0.82;
-    border:1.5px solid var(--gold);
+    background:rgba(10, 10, 10, 0.25);
+    opacity:1;
+    border:1.5px solid rgba(212, 175, 55, 0.75);
     box-shadow:
-      0 0 22px rgba(212, 175, 55, 0.35),
-      0 8px 24px rgba(0, 0, 0, 0.55);
+      0 0 22px rgba(212, 175, 55, 0.3),
+      0 8px 24px rgba(0, 0, 0, 0.45);
   }
   .orb.over-cell img{
     opacity:0;
     transform:scale(.5);
   }
   .orb.over-cell .orb-lens{
-    opacity:0.75;
+    opacity:1; /* сама увеличенная картинка в линзе чёткая */
   }
   .orb.over-cell::before,
   .orb.over-cell::after{
     opacity:1;
   }
+
 
 
   /* ============ LIGHTBOX ============ */
