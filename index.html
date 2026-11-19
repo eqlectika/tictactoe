@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#0a0a0a">
+<title>GALLERY·TAC — A Game in Pictures</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Inter:wght@300;400;600&family=Noto+Sans+Arabic:wght@400;600&family=Noto+Sans+SC:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0a0a0a;
+    --panel:#111111;
+    --gold:#d4af37;
+    --gold-line:#d4af3766;
+    --ink:#f5f0e6;
+    --dim:#7a7468;
+    --cell-bg:#141414;
+    --win-glow:0 0 30px #d4af37aa, 0 0 60px #d4af3766;
+    --cell-size:min(26vw, 26vh, 110px);
+    --gap:clamp(4px, 1.2vw, 10px);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;margin:0;padding:0}
+  html{
+    overflow-y:auto;overflow-x:hidden;
+    background:var(--bg);
+    -webkit-text-size-adjust:100%;
+    scroll-behavior:smooth;
+  }
+  body{
+    min-height:100dvh;
+    min-height:100svh;
+    background:var(--bg);color:var(--ink);
+    font-family:'Inter',-apple-system,system-ui,sans-serif;
+    -webkit-font-smoothing:antialiased;
+    display:flex;flex-direction:column;
+    padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom);
+    overflow-x:hidden;
+  }
+  body[dir="rtl"] .hint{ text-align:center; }
+
+  /* ============ HEADER ============ */
+  header{
+    text-align:center;
+    padding:clamp(10px,2.5vh,18px) 16px clamp(4px,1vh,8px);
+    flex-shrink:0;
+  }
+  .logo{
+    font-family:'Cinzel',serif;font-weight:700;
+    font-size:clamp(20px,5.5vw,30px);letter-spacing:.24em;
+    color:var(--gold);
+    text-shadow:0 0 24px #d4af3744;
+  }
+  .tagline{
+    font-size:clamp(9px,2.4vw,11px);
+    letter-spacing:.3em;text-transform:uppercase;
+    color:var(--dim);margin-top:6px;font-weight:300;
+  }
+
+  /* ============ LANGUAGE SWITCHER ============ */
+  .lang-bar{
+    display:flex;justify-content:center;gap:6px;margin-top:12px;
+    flex-wrap:wrap;
+  }
+  .lang-btn{
+    padding:7px 14px;
+    border-radius:8px;
+    background:#ffffff06;
+    border:1px solid #ffffff14;
+    color:var(--dim);
+    font-size:12px;font-weight:600;
+    letter-spacing:.04em;
+    cursor:pointer;
+    transition:.2s;
+    text-align:center;
+    min-width:48px;
+  }
+  .lang-btn:hover{background:#ffffff10;color:var(--ink)}
+  .lang-btn.active{
+    background:#d4af3722;
+    color:var(--gold);
+    border-color:var(--gold-line);
+  }
+
+  /* ============ HINT (collapsible) ============ */
+  .hint{
+    margin:14px auto 0;
+    max-width:460px;
+    font-size:clamp(10px,2.5vw,12px);
+    color:#a89e8a;line-height:1.6;
+    padding:10px 16px;
+    border:1px dashed var(--gold-line);
+    border-radius:10px;
+    background:#ffffff04;
+    text-align:center;
+    cursor:pointer;
+    user-select:none;
+    transition:max-height .35s ease, padding .35s ease, margin .35s ease, opacity .25s ease, border-color .2s;
+    overflow:hidden;
+    max-height:340px;
+    position:relative;
+  }
+  .hint:hover{border-color:var(--gold)}
+  .hint:active{background:#ffffff08}
+  .hint.collapsed{
+    max-height:32px;
+    padding:6px 16px;
+    margin-top:12px;
+    opacity:.85;
+  }
+  .hint .hint-inner{
+    transition:opacity .25s ease;
+  }
+  .hint.collapsed .hint-inner{
+    opacity:0;
+    pointer-events:none;
+  }
+  .hint .hint-toggle{
+    position:absolute;
+    top:50%;left:50%;transform:translate(-50%,-50%);
+    font-size:14px;letter-spacing:.4em;
+    color:var(--gold);
+    opacity:0;transition:opacity .25s ease;
+    pointer-events:none;
+  }
+  .hint.collapsed .hint-toggle{opacity:1}
+  .hint b{color:var(--gold);font-weight:600}
+  .hint .icon-inline{
+    display:inline-block;width:16px;height:16px;
+    vertical-align:-3px;margin:0 2px;
+    border-radius:50%;background:#ffffff10;
+    border:1px solid var(--gold-line);
+  }
+  body[lang="ar"] .hint{font-family:'Noto Sans Arabic','Inter',sans-serif}
+  body[lang="zh"] .hint{font-family:'Noto Sans SC','Inter',sans-serif;line-height:1.7}
+
+  .rule{
+    width:60px;height:1px;margin:12px auto 0;
+    background:linear-gradient(90deg,transparent,var(--gold),transparent);
+  }
+
+  /* ============ HUD ============ */
+  .hud{
+    display:flex;align-items:center;justify-content:center;gap:clamp(10px,4vw,20px);
+    padding:6px 16px;font-size:clamp(10px,2.6vw,12px);
+    letter-spacing:.15em;text-transform:uppercase;
+    color:var(--dim);flex-shrink:0;
+  }
+  .hud .side{display:flex;align-items:center;gap:6px}
+  .hud .side .badge{
+    width:24px;height:24px;border-radius:5px;
+    display:flex;align-items:center;justify-content:center;
+    border:1px solid var(--gold-line);
+    background:#ffffff06;
+    transition:.3s;
+  }
+  .hud .side.x.active .badge{
+    border-color:var(--gold);
+    box-shadow:0 0 12px #d4af3766;
+  }
+  .hud .side.o.active .badge{
+    border-color:#e8e2d4;
+    box-shadow:0 0 12px #ffffff44;
+  }
+  .hud .side .badge img{width:18px;height:18px;object-fit:contain;opacity:.7}
+  .hud .side.x.active .badge img,
+  .hud .side.o.active .badge img{opacity:1}
+  .hud .status{
+    color:var(--gold);font-weight:600;
+    min-width:120px;text-align:center;
+    transition:color .3s;
+  }
+
+  /* ============ BOARD ============ */
+  .board-stage{
+    flex:1 1 auto;
+    display:flex;align-items:center;justify-content:center;
+    position:relative;
+    padding:clamp(8px,2vh,16px) 12px;
+    min-height:0;
+  }
+  .board{
+    display:grid;
+    grid-template-columns:repeat(3,var(--cell-size));
+    grid-template-rows:repeat(3,var(--cell-size));
+    gap:var(--gap);
+    padding:var(--gap);
+    background:var(--panel);
+    border-radius:14px;
+    box-shadow:0 0 0 1px var(--gold-line),0 30px 80px #00000099;
+    position:relative;
+  }
+
+  /* ============ CELL ============ */
+  .cell{
+    position:relative;
+    background:var(--cell-bg);
+    border-radius:8px;
+    overflow:hidden;
+    cursor:pointer;
+    display:flex;align-items:center;justify-content:center;
+    transition:transform .2s ease, box-shadow .3s ease;
+    user-select:none;
+    border:1px solid #ffffff08;
+  }
+  .cell:not(.locked):hover{transform:translateY(-2px);box-shadow:0 8px 24px #000000aa}
+  .cell:not(.locked):active{transform:scale(.96)}
+  .cell.locked{cursor:default}
+
+  .cell .photo{
+    position:absolute;inset:0;
+    width:100%;height:100%;
+    object-fit:cover;
+    display:block;
+    transition:transform .5s ease, filter .4s ease;
+    pointer-events:none;
+  }
+  .cell:not(.locked):hover .photo{transform:scale(1.06)}
+  .cell.locked .photo{filter:brightness(.55) saturate(.7)}
+
+  .mark{
+    position:relative;z-index:2;
+    width:100%;height:100%;
+    display:flex;align-items:center;justify-content:center;
+    opacity:1;
+  }
+  .mark img{
+    width:70%;height:70%;object-fit:contain;
+    filter:drop-shadow(0 4px 14px #000000cc);
+  }
+  .mark.x img{filter:drop-shadow(0 0 14px var(--gold))}
+  .mark.o img{filter:drop-shadow(0 0 14px #ffffff88)}
+
+  .cell.win{
+    animation:winPulse 1.4s ease infinite alternate;
+    border-color:var(--gold);
+  }
+  @keyframes winPulse{
+    from{box-shadow:inset 0 0 0 2px var(--gold), var(--win-glow)}
+    to  {box-shadow:inset 0 0 0 3px var(--gold), 0 0 60px var(--gold)}
+  }
+
+  .connector{
+    position:absolute;pointer-events:none;
+    height:3px;background:linear-gradient(90deg,transparent,var(--gold),transparent);
+    border-radius:2px;box-shadow:0 0 20px var(--gold);
+    animation:connGrow .5s ease forwards;
+    transform-origin:left center;z-index:10;
+  }
+  @keyframes connGrow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+
+  /* ============ FOOTER ============ */
+  footer{
+    text-align:center;
+    padding:14px 16px calc(16px + env(safe-area-inset-bottom));
+    border-top:1px solid #ffffff08;
+    flex-shrink:0;
+    opacity:0;transform:translateY(20px);
+    max-height:0;padding-top:0;padding-bottom:0;
+    overflow:hidden;
+    transition:opacity .6s ease, transform .6s ease, max-height .6s ease, padding .6s ease;
+  }
+  footer.show{
+    opacity:1;transform:translateY(0);
+    max-height:340px;
+    padding:14px 16px calc(16px + env(safe-area-inset-bottom));
+  }
+  .brand{
+    font-family:'Cinzel',serif;font-weight:700;
+    font-size:clamp(10px,2.8vw,13px);
+    letter-spacing:.32em;color:var(--gold);
+  }
+  .craft{
+    font-size:clamp(9px,2.3vw,11px);
+    letter-spacing:.15em;color:var(--dim);margin-top:6px;
+    line-height:1.6;
+  }
+  .craft a{color:var(--dim);text-decoration:none;border-bottom:1px solid #ffffff22}
+  .craft a:hover{color:var(--gold)}
+  .manifesto{
+    margin-top:8px;font-style:italic;
+    font-size:clamp(10px,2.4vw,12px);
+    color:#a89e8a;letter-spacing:.05em;
+  }
+
+  /* ============ ORB ============ */
+  .orb{
+    position:fixed;z-index:150;
+    width:48px;height:48px;border-radius:50%;
+    background:#ffffff08;border:1px solid var(--gold-line);
+    display:flex;align-items:center;justify-content:center;
+    cursor:grab;touch-action:none;user-select:none;
+    transition:transform .15s ease, background .2s ease, border-color .2s ease, box-shadow .2s ease;
+    box-shadow:0 4px 20px #00000088;
+    overflow:hidden;
+  }
+  .orb:active{cursor:grabbing;transform:scale(1.08)}
+  .orb img{
+    width:60%;height:60%;object-fit:contain;
+    pointer-events:none;
+    transition:opacity .2s ease, transform .2s ease;
+  }
+  .orb.over-cell{
+    background:#d4af3722;
+    border-color:var(--gold);
+    box-shadow:0 0 24px #d4af3766, 0 4px 20px #000000aa;
+    transform:scale(1.12);
+  }
+  .orb.over-cell img{transform:scale(1.05)}
+
+  /* ============ LIGHTBOX ============ */
+  .lightbox{
+    position:fixed;inset:0;z-index:400;
+    background:#000000f0;
+    display:none;align-items:center;justify-content:center;
+    padding:24px;
+    opacity:0;transition:opacity .3s ease;
+    cursor:zoom-out;
+  }
+  .lightbox.open{display:flex;opacity:1}
+  .lightbox img{
+    max-width:96vw;max-height:90vh;
+    object-fit:contain;
+    border-radius:8px;
+    box-shadow:0 0 80px #d4af3744, 0 0 0 1px var(--gold-line);
+    animation:lbIn .4s cubic-bezier(.34,1.56,.64,1);
+  }
+  @keyframes lbIn{
+    from{transform:scale(.85);opacity:0}
+    to{transform:scale(1);opacity:1}
+  }
+  .lightbox .lb-hint{
+    position:absolute;bottom:24px;left:50%;transform:translateX(-50%);
+    font-size:11px;letter-spacing:.15em;text-transform:uppercase;
+    color:var(--dim);pointer-events:none;
+  }
+
+  /* ============ RESPONSIVE ============ */
+  @media (min-aspect-ratio:1/1){
+    :root{--cell-size:min(22vw,24vh,120px)}
+  }
+  @media (max-height:600px){
+    :root{--cell-size:min(20vw,18vh,90px)}
+    header{padding:6px 12px 2px}
+    .logo{font-size:18px;letter-spacing:.2em}
+    .tagline{display:none}
+    .hint{font-size:9px;padding:6px 10px;margin-top:8px;max-height:220px}
+    .hint.collapsed{max-height:28px}
+    .rule{margin-top:6px}
+    footer{padding:8px 12px}
+    .craft, .manifesto{font-size:9px;margin-top:4px}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">GALLERY·TAC</div>
+  <div class="tagline" data-i18n="tagline">A Game in Pictures</div>
+
+  <nav class="lang-bar" aria-label="Language">
+    <button class="lang-btn" data-lang="en">EN</button>
+    <button class="lang-btn" data-lang="ru">РУ</button>
+    <button class="lang-btn" data-lang="ar">العربية</button>
+    <button class="lang-btn" data-lang="zh">中文</button>
+  </nav>
+
+  <div class="hint" id="hint" role="button" tabindex="0" aria-expanded="true">
+    <div class="hint-inner" id="hintInner"></div>
+    <div class="hint-toggle" aria-hidden="true">···</div>
+  </div>
+  <div class="rule"></div>
+</header>
+
+<div class="hud" id="hud">
+  <div class="side x" id="sideX">
+    <span class="badge"><img src="x.png" alt="X"></span>
+  </div>
+  <div class="status" id="status" data-i18n="turnX">YOUR TURN</div>
+  <div class="side o" id="sideO">
+    <span class="badge"><img src="0.png" alt="O"></span>
+  </div>
+</div>
+
+<div class="board-stage">
+  <div class="board" id="board"></div>
+</div>
+
+<footer id="footer">
+  <div class="brand">DESIGNED BY EQLECTIKA</div>
+  <div class="craft" data-i18n="craft">
+    Creative Web Development · Interactive Experiences · Progressive Web Apps
+  </div>
+  <div class="craft"><a href="https://eqlectika.github.io" target="_blank" rel="noopener">eqlectika.github.io</a></div>
+  <div class="manifesto" data-i18n="manifesto">"Websites don’t have to be static."</div>
+</footer>
+
+<div class="orb" id="orb" style="right:16px;top:16px;">
+  <img id="orbIcon" src="refresh.svg" alt="↻">
+</div>
+
+<div class="lightbox" id="lightbox">
+  <img id="lbImage" alt="">
+  <div class="lb-hint" id="lbHint" data-i18n="tapToClose">Tap to close</div>
+</div>
+
+<script>
+const GALLERY = [
+  'gallery/01.jpg','gallery/02.jpg','gallery/03.jpg',
+  'gallery/04.jpg','gallery/05.jpg','gallery/06.jpg',
+  'gallery/07.jpg','gallery/08.jpg','gallery/09.jpg',
+  'gallery/10.jpg','gallery/11.jpg','gallery/12.jpg',
+  'gallery/13.jpg','gallery/14.jpg','gallery/15.jpg',
+  'gallery/16.jpg','gallery/17.jpg','gallery/18.jpg'
+];
+const X_IMG = 'x.png';
+const O_IMG = '0.png';
+
+const I18N = {
+  en: {
+    dir: 'ltr',
+    tagline: 'A Game in Pictures',
+    hint: '<b>Tip:</b> Drag the round orb anywhere on screen. When it hovers over a cell, it turns into a <img class="icon-inline" alt="?"> magnifier. Tap it — the picture opens full-screen. Tap the picture again to fold it back into its cell and continue the game.',
+    turnX: 'YOUR TURN',
+    turnO: 'COMPUTER',
+    win: '✦ YOU WIN ✦',
+    lose: 'COMPUTER WINS',
+    draw: 'DRAW',
+    tapToClose: 'Tap to close',
+    craft: 'Creative Web Development · Interactive Experiences · Progressive Web Apps',
+    manifesto: '"Websites don’t have to be static."'
+  },
+  ru: {
+    dir: 'ltr',
+    tagline: 'Игра в картинках',
+    hint: '<b>Подсказка:</b> Перетаскивайте круглый орб по экрану. Над ячейкой он превращается в <img class="icon-inline" alt="?"> лупу. Тапните по лупе — картинка откроется во весь экран. Тап по картинке снова свернёт её в ячейку, и партия продолжится.',
+    turnX: 'ВАШ ХОД',
+    turnO: 'КОМПЬЮТЕР',
+    win: '✦ ВЫ ПОБЕДИЛИ ✦',
+    lose: 'КОМПЬЮТЕР ПОБЕДИЛ',
+    draw: 'НИЧЬЯ',
+    tapToClose: 'Тап — закрыть',
+    craft: 'Веб-разработка · Интерактивные эксперименты · Progressive Web Apps',
+    manifesto: '«Сайты не обязаны быть статичными.»'
+  },
+  ar: {
+    dir: 'rtl',
+    tagline: 'لعبة بالصور',
+    hint: '<b>نصيحة:</b> اسحب الكرة الدائرية إلى أي مكان على الشاشة. عندما تمر فوق خلية، تتحول إلى <img class="icon-inline" alt="?"> عدسة مكبّرة. انقر عليها — تُفتح الصورة بملء الشاشة. انقر على الصورة مرة أخرى لتُطوى في خليتها وتستمر اللعبة.',
+    turnX: 'دورك',
+    turnO: 'الكمبيوتر',
+    win: '✦ لقد فزت ✦',
+    lose: 'فاز الكمبيوتر',
+    draw: 'تعادل',
+    tapToClose: 'انقر للإغلاق',
+    craft: 'تطوير ويب إبداعي · تجارب تفاعلية · تطبيقات ويب تقدمية',
+    manifesto: '«لا يجب أن تكون المواقع ثابتة.»'
+  },
+  zh: {
+    dir: 'ltr',
+    tagline: '图画的游戏',
+    hint: '<b>提示：</b>将圆形球拖到屏幕任意位置。悬停在格子上方时，它会变成 <img class="icon-inline" alt="?"> 放大镜。点击它，图片会全屏打开。再次点击图片即可折叠回格子，游戏继续。',
+    turnX: '轮到你了',
+    turnO: '电脑',
+    win: '✦ 你赢了 ✦',
+    lose: '电脑获胜',
+    draw: '平局',
+    tapToClose: '点击关闭',
+    craft: '创意网页开发 · 互动体验 · 渐进式网页应用',
+    manifesto: '“网站不必是静态的。”'
+  }
+};
+
+const state = {
+  board: Array(9).fill(null),
+  turn: 'X',
+  over: false,
+  winLine: [],
+  lang: 'en'
+};
+
+const boardEl   = document.getElementById('board');
+const statusEl  = document.getElementById('status');
+const footerEl  = document.getElementById('footer');
+const orbEl     = document.getElementById('orb');
+const orbIcon   = document.getElementById('orbIcon');
+const lightbox  = document.getElementById('lightbox');
+const lbImage   = document.getElementById('lbImage');
+const hintEl    = document.getElementById('hint');
+const hintInner = document.getElementById('hintInner');
+const sideXEl   = document.getElementById('sideX');
+const sideOEl   = document.getElementById('sideO');
+
+const WINS = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+
+function detectLang(){
+  const saved = localStorage.getItem('gt_lang');
+  if(saved && I18N[saved]) return saved;
+  const nav = (navigator.language || 'en').toLowerCase();
+  if(nav.startsWith('ru')) return 'ru';
+  if(nav.startsWith('ar')) return 'ar';
+  if(nav.startsWith('zh')) return 'zh';
+  return 'en';
+}
+
+function applyLang(lang){
+  state.lang = lang;
+  localStorage.setItem('gt_lang', lang);
+  const pack = I18N[lang];
+
+  document.documentElement.lang = lang;
+  document.body.lang = lang;
+  document.body.dir = pack.dir;
+
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.dataset.i18n;
+    if(pack[key] !== undefined) el.textContent = pack[key];
+  });
+
+  const wasCollapsed = hintEl.classList.contains('collapsed');
+  hintInner.innerHTML = pack.hint;
+  updateHintState(wasCollapsed ? false : true);
+
+  document.querySelectorAll('.lang-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.lang === lang);
+  });
+
+  updateStatusText();
+}
+
+function updateHintState(expanded){
+  if(expanded){
+    hintEl.classList.remove('collapsed');
+    hintEl.setAttribute('aria-expanded','true');
+  } else {
+    hintEl.classList.add('collapsed');
+    hintEl.setAttribute('aria-expanded','false');
+  }
+}
+
+function toggleHint(){
+  const isCollapsed = hintEl.classList.contains('collapsed');
+  updateHintState(isCollapsed);
+  localStorage.setItem('gt_hint_collapsed', isCollapsed ? '0' : '1');
+}
+
+hintEl.addEventListener('click', toggleHint);
+hintEl.addEventListener('keydown', e => {
+  if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); toggleHint(); }
+});
+
+document.querySelectorAll('.lang-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    applyLang(btn.dataset.lang);
+    if(hintEl.classList.contains('collapsed')){
+      updateHintState(true);
+      localStorage.setItem('gt_hint_collapsed', '0');
+    }
+  });
+});
+
+function shuffle(a){
+  for(let i=a.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+function vibrate(p){ if(navigator.vibrate) navigator.vibrate(p); }
+function buildImageDeck(){
+  const pool = shuffle([...GALLERY]);
+  while(pool.length < 9) pool.push(...shuffle([...GALLERY]));
+  return pool.slice(0, 9);
+}
+function t(key){
+  const pack = I18N[state.lang] || I18N.en;
+  return pack[key] !== undefined ? pack[key] : I18N.en[key];
+}
+
+function updateStatusText(){
+  if(state.over){
+    if(state.winLine.length){
+      const xWon = state.winLine.some(i => state.board[i].owner === 'X');
+      statusEl.textContent = xWon ? t('win') : t('lose');
+      statusEl.style.color = 'var(--gold)';
+    } else {
+      statusEl.textContent = t('draw');
+      statusEl.style.color = 'var(--dim)';
+    }
+  } else {
+    statusEl.textContent = state.turn === 'X' ? t('turnX') : t('turnO');
+    statusEl.style.color = state.turn === 'X' ? 'var(--gold)' : 'var(--dim)';
+  }
+  sideXEl.classList.toggle('active', !state.over && state.turn === 'X');
+  sideOEl.classList.toggle('active', !state.over && state.turn === 'O');
+}
+
+function render(){
+  boardEl.innerHTML = '';
+  state.board.forEach((cell, i) => {
+    const el = document.createElement('div');
+    el.className = 'cell';
+    el.dataset.i = i;
+
+    if(cell?.img){
+      const photo = document.createElement('img');
+      photo.className = 'photo';
+      photo.src = cell.img;
+      photo.alt = '';
+      photo.loading = 'lazy';
+      photo.draggable = false;
+      el.appendChild(photo);
+    }
+
+    if(cell?.owner){
+      el.classList.add('locked');
+      const mark = document.createElement('div');
+      mark.className = 'mark ' + (cell.owner === 'X' ? 'x' : 'o');
+      const mimg = document.createElement('img');
+      mimg.src = cell.owner === 'X' ? X_IMG : O_IMG;
+      mimg.alt = cell.owner;
+      mark.appendChild(mimg);
+      el.appendChild(mark);
+      if(state.winLine.includes(i)) el.classList.add('win');
+    }
+
+    el.addEventListener('click', () => onCellClick(i));
+    boardEl.appendChild(el);
+  });
+
+  updateStatusText();
+
+  boardEl.querySelectorAll('.connector').forEach(c => c.remove());
+  if(state.winLine.length && state.over){
+    requestAnimationFrame(() => drawConnector(state.winLine));
+  }
+}
+
+function drawConnector(line){
+  const cells = [...boardEl.children];
+  if(!cells[line[0]] || !cells[line[2]]) return;
+  const a = cells[line[0]].getBoundingClientRect();
+  const c = cells[line[2]].getBoundingClientRect();
+  const boardRect = boardEl.getBoundingClientRect();
+  const x1 = a.left + a.width/2 - boardRect.left;
+  const y1 = a.top  + a.height/2 - boardRect.top;
+  const x2 = c.left + c.width/2 - boardRect.left;
+  const y2 = c.top  + c.height/2 - boardRect.top;
+  const len = Math.hypot(x2-x1, y2-y1);
+  const ang = Math.atan2(y2-y1, x2-x1) * 180/Math.PI;
+  const conn = document.createElement('div');
+  conn.className = 'connector';
+  conn.style.left = x1 + 'px';
+  conn.style.top  = y1 + 'px';
+  conn.style.width = len + 'px';
+  conn.style.transform = `rotate(${ang}deg)`;
+  boardEl.appendChild(conn);
+}
+
+function newGame(){
+  state.board = buildImageDeck().map(img => ({ img, owner: null }));
+  state.turn = 'X';
+  state.over = false;
+  state.winLine = [];
+  footerEl.classList.remove('show');
+  render();
+}
+
+function onCellClick(i){
+  if(state.over) return;
+  if(state.turn !== 'X') return;
+  const cell = state.board[i];
+  if(!cell || cell.owner) return;
+
+  cell.owner = 'X';
+  state.turn = 'O';
+  vibrate(15);
+  render();
+
+  if(checkEnd()) return;
+  setTimeout(aiMove, 420);
+}
+
+function aiMove(){
+  if(state.over) return;
+
+  let move = findWinningMove('O')
+          ?? findWinningMove('X')
+          ?? (!state.board[4].owner ? 4 : null)
+          ?? [0,2,6,8].find(i => !state.board[i].owner)
+          ?? state.board.map((c,i)=>c.owner?null:i).filter(i=>i!==null)[Math.floor(Math.random()*4)];
+
+  if(move == null) return;
+  state.board[move].owner = 'O';
+  state.turn = 'X';
+  vibrate(10);
+  render();
+  checkEnd();
+}
+
+function findWinningMove(owner){
+  for(const line of WINS){
+    const vals = line.map(i => state.board[i].owner);
+    if(vals.filter(v => v === owner).length === 2 && vals.includes(null)){
+      return line[vals.indexOf(null)];
+    }
+  }
+  return null;
+}
+
+function checkEnd(){
+  for(const line of WINS){
+    const [a,b,c] = line;
+    const A = state.board[a].owner;
+    if(A && A === state.board[b].owner && A === state.board[c].owner){
+      state.winLine = line;
+      state.over = true;
+      render();
+      victory();
+      return true;
+    }
+  }
+  if(state.board.every(c => c.owner)){
+    state.over = true;
+    render();
+    onGameEnd();
+    return true;
+  }
+  return false;
+}
+
+function victory(){
+  vibrate([40,60,40,60,140]);
+  onGameEnd();
+}
+
+function onGameEnd(){
+  footerEl.classList.add('show');
+
+  setTimeout(() => {
+    const footerRect = footerEl.getBoundingClientRect();
+    const targetY = window.scrollY + footerRect.bottom - window.innerHeight;
+
+    if(targetY > 0){
+      try {
+        window.scrollTo({ top: targetY, behavior: 'smooth' });
+      } catch {
+        window.scrollTo(0, targetY);
+      }
+      setTimeout(() => {
+        try { footerEl.scrollIntoView({behavior:'smooth', block:'end'}); }
+        catch { footerEl.scrollIntoView(false); }
+      }, 250);
+    }
+  }, 350);
+}
+
+/* ---------- ORB ---------- */
+let orbDragging = false;
+let orbStartX = 0, orbStartY = 0;
+let orbOriginLeft = 0, orbOriginTop = 0;
+let orbMoved = false;
+let orbOverCell = false;
+let currentHoverIndex = -1;
+
+function initOrbPosition(){
+  const r = orbEl.getBoundingClientRect();
+  orbEl.style.left = (window.innerWidth - r.width - 16) + 'px';
+  orbEl.style.top  = '16px';
+  orbEl.style.right = 'auto';
+}
+initOrbPosition();
+
+window.addEventListener('resize', () => {
+  const r = orbEl.getBoundingClientRect();
+  const x = Math.min(Math.max(0, r.left), window.innerWidth - r.width);
+  const y = Math.min(Math.max(0, r.top),  window.innerHeight - r.height);
+  orbEl.style.left = x + 'px';
+  orbEl.style.top  = y + 'px';
+});
+
+orbEl.addEventListener('pointerdown', e => {
+  e.preventDefault(); e.stopPropagation();
+  orbDragging = true;
+  orbMoved = false;
+  orbStartX = e.clientX;
+  orbStartY = e.clientY;
+  const r = orbEl.getBoundingClientRect();
+  orbOriginLeft = r.left;
+  orbOriginTop  = r.top;
+  orbEl.setPointerCapture(e.pointerId);
+});
+
+orbEl.addEventListener('pointermove', e => {
+  if(!orbDragging) return;
+  const dx = e.clientX - orbStartX;
+  const dy = e.clientY - orbStartY;
+  if(Math.abs(dx) > 4 || Math.abs(dy) > 4) orbMoved = true;
+
+  const r = orbEl.getBoundingClientRect();
+  let newLeft = orbOriginLeft + dx;
+  let newTop  = orbOriginTop  + dy;
+  newLeft = Math.max(0, Math.min(window.innerWidth  - r.width,  newLeft));
+  newTop  = Math.max(0, Math.min(window.innerHeight - r.height, newTop));
+  orbEl.style.left = newLeft + 'px';
+  orbEl.style.top  = newTop  + 'px';
+
+  updateOrbHover();
+});
+
+orbEl.addEventListener('pointerup', e => {
+  if(!orbDragging) return;
+  orbDragging = false;
+  try { orbEl.releasePointerCapture(e.pointerId); } catch {}
+  if(!orbMoved) handleOrbTap();
+  else updateOrbHover();
+});
+
+orbEl.addEventListener('pointercancel', () => { orbDragging = false; });
+
+function updateOrbHover(){
+  const orbRect = orbEl.getBoundingClientRect();
+  const cx = orbRect.left + orbRect.width/2;
+  const cy = orbRect.top  + orbRect.height/2;
+
+  let hoverIndex = -1;
+  const cells = [...boardEl.children];
+  for(let i=0;i<cells.length;i++){
+    const r = cells[i].getBoundingClientRect();
+    if(cx >= r.left && cx <= r.right && cy >= r.top && cy <= r.bottom){
+      hoverIndex = i;
+      break;
+    }
+  }
+
+  currentHoverIndex = hoverIndex;
+  orbOverCell = hoverIndex !== -1;
+
+  if(orbOverCell){
+    orbEl.classList.add('over-cell');
+    orbIcon.src = 'question.png';
+    orbIcon.alt = '?';
+  } else {
+    orbEl.classList.remove('over-cell');
+    orbIcon.src = 'refresh.svg';
+    orbIcon.alt = '↻';
+  }
+}
+
+function handleOrbTap(){
+  updateOrbHover();
+  if(orbOverCell && currentHoverIndex !== -1){
+    openLightbox(currentHoverIndex);
+  } else {
+    newGame();
+  }
+}
+
+/* ---------- LIGHTBOX ---------- */
+function openLightbox(i){
+  const cell = state.board[i];
+  if(!cell || !cell.img) return;
+  lbImage.src = cell.img;
+  lightbox.classList.add('open');
+  vibrate(10);
+}
+
+function closeLightbox(){
+  lightbox.classList.remove('open');
+  lbImage.src = '';
+  setTimeout(updateOrbHover, 50);
+}
+
+lightbox.addEventListener('click', closeLightbox);
+window.addEventListener('keydown', e => {
+  if(e.key === 'Escape' && lightbox.classList.contains('open')) closeLightbox();
+});
+
+window.addEventListener('scroll', updateOrbHover, {passive:true});
+
+(function init(){
+  const hintCollapsed = localStorage.getItem('gt_hint_collapsed') === '1';
+  applyLang(detectLang());
+  updateHintState(!hintCollapsed);
+  newGame();
+})();
+</script>
+</body>
+</html>
