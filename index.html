@@ -5,8 +5,9 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#0a0a0a">
 <title>GALLERY+TIC-TAC-TOE | A Game in Pictures</title>
+<link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Inter:wght@300;400;600&family=Noto+Sans+Arabic:wght@400;600&family=Noto+Sans+SC:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Unbounded:wght@300;400;600;700&family=Noto+Sans+Arabic:wght@400;600&family=Noto+Sans+SC:wght@400;600&display=swap" rel="stylesheet">
 <style>
   :root{
     --bg:#0a0a0a;
@@ -20,6 +21,9 @@
     --cell-size:min(26vw, 26vh, 110px);
     --gap:clamp(4px, 1.2vw, 10px);
   }
+
+*{ letter-spacing:0 !important; }
+
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;margin:0;padding:0}
   html{
     overflow-y:auto;overflow-x:hidden;
@@ -31,7 +35,7 @@
     min-height:100dvh;
     min-height:100svh;
     background:var(--bg);color:var(--ink);
-    font-family:'Inter',-apple-system,system-ui,sans-serif;
+    font-family:'Unbounded',-apple-system,system-ui,sans-serif;
     -webkit-font-smoothing:antialiased;
     display:flex;flex-direction:column;
     padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom);
@@ -61,6 +65,7 @@
   .lang-bar{
     display:flex;justify-content:center;gap:6px;margin-top:12px;
     flex-wrap:wrap;
+    direction: ltr;
   }
   .lang-btn{
     padding:7px 14px;
@@ -68,6 +73,7 @@
     background:#ffffff06;
     border:1px solid #ffffff14;
     color:var(--dim);
+    font-family:'Unbounded',sans-serif;
     font-size:12px;font-weight:600;
     letter-spacing:.04em;
     cursor:pointer;
@@ -86,7 +92,7 @@
   .hint{
     margin:14px auto 0;
     max-width:768px;
-    font-size:clamp(14px,3.0vw,14px);
+    font-size:clamp(13px,3.0vw,14px);
     color:#a89e8a;line-height:1.6;
     padding:10px 16px;
     border:none;
@@ -102,7 +108,6 @@
   }
   .hint:hover{background:#ffffff08}
 
-  .hint:hover{border-color:var(--gold)}
   .hint.collapsed{
     max-height:32px;
     padding:6px 16px;
@@ -132,8 +137,8 @@
     border-radius:50%;background:#ffffff10;
     border:1px solid var(--gold-line);
   }
-  body[lang="ar"] .hint{font-family:'Noto Sans Arabic','Inter',sans-serif}
-  body[lang="zh"] .hint{font-family:'Noto Sans SC','Inter',sans-serif;line-height:1.7}
+  body[lang="ar"] .hint{font-family:'Noto Sans Arabic','Unbounded',sans-serif}
+  body[lang="zh"] .hint{font-family:'Noto Sans SC','Unbounded',sans-serif;line-height:1.7}
 
   .rule{
     width:60px;height:1px;margin:12px auto 0;
@@ -290,7 +295,7 @@
 .craft a:hover{
   color:#f5d76e;
   border-bottom-color:var(--gold);
-  text-shadow:0 0 18px #d4af3799; 
+  text-shadow:0 0 18px #d4af3799;
 }
   .manifesto{
     margin-top:8px;font-style:italic;
@@ -320,7 +325,6 @@
     transition:opacity .18s ease, transform .18s ease;
   }
 
-  /* Оптический слой линзы */
   .orb-lens{
     position:absolute;inset:0;
     border-radius:50%;
@@ -331,7 +335,6 @@
     transition:opacity .18s ease;
     filter:contrast(1.06) saturate(1.1);
   }
-  /* Сферический блик и оптическое преломление по краю */
   .orb::before{
     content:'';
     position:absolute;inset:0;border-radius:50%;
@@ -344,7 +347,6 @@
       inset 0 2px 4px rgba(255,255,255,.45),
       inset 0 -3px 6px rgba(0,0,0,.65);
   }
-  /* Вторичный нижний рефлекс линзы */
   .orb::after{
     content:'';
     position:absolute;
@@ -357,7 +359,6 @@
     opacity:0;transition:opacity .2s ease;
   }
 
-  /* Режим лупы над ячейкой */
   .orb.over-cell{
     width:72px;height:72px;
     background:#0a0a0a;
@@ -419,9 +420,6 @@
     footer{padding:8px 12px}
     .craft, .manifesto{font-size:9px;margin-top:4px}
   }
-  .lang-bar {
-    direction: ltr;
-  }
 
 </style>
 </head>
@@ -472,7 +470,6 @@
   <div class="orb-lens" id="orbLens"></div>
   <img id="orbIcon" src="refresh.png" alt="↻">
 </div>
-
 
 <div class="lightbox" id="lightbox">
   <img id="lbImage" alt="">
@@ -534,7 +531,7 @@ const I18N = {
   zh: {
     dir: 'ltr',
     tagline: '图画的游戏',
-    hint: '<b>提示：</b>将圆形球拖到屏幕任意位置。悬停在格子上方时，它会变成 放大镜。点击它，图片会全屏打开。再次点击图片即可折叠回格子，游戏继续。',
+    hint: '<b>提示：</b>将圆形球拖到屏幕任意位置。悬停在格子上方时，它会变成放大镜。点击它，图片会全屏打开。再次点击图片即可折叠回格子，游戏继续。',
     turnX: '轮到你了',
     turnO: '电脑',
     win: '✦ 你赢了 ✦',
@@ -728,7 +725,7 @@ function drawConnector(line){
   conn.style.left = x1 + 'px';
   conn.style.top  = y1 + 'px';
   conn.style.width = len + 'px';
-conn.style.setProperty('--ang', ang + 'deg');
+  conn.style.setProperty('--ang', ang + 'deg');
 
   boardEl.appendChild(conn);
 }
@@ -749,7 +746,6 @@ function newGame(){
     updateOrbHover();
   }
 }
-
 
 function onCellClick(i){
   if(state.over) return;
@@ -853,7 +849,7 @@ function initOrbPosition(){
   const targetEl = statusEl || document.getElementById('hud');
   const targetRect = targetEl.getBoundingClientRect();
 
-  const offsetY = 48; // положительное значение сдвигает ниже, отрицательное — выше
+  const offsetY = 48;
   const centerX = targetRect.left + targetRect.width / 2 - orbRect.width / 2;
   const aboveY  = targetRect.top - orbRect.height + offsetY;
 
@@ -914,7 +910,7 @@ orbEl.addEventListener('pointerup', e => {
 orbEl.addEventListener('pointercancel', () => { orbDragging = false; });
 
 const orbLens = document.getElementById('orbLens');
-const LENS_ZOOM = 1.85; // коэффициент увеличения линзы
+const LENS_ZOOM = 1.85;
 
 function updateOrbHover(){
   const orbRect = orbEl.getBoundingClientRect();
@@ -939,7 +935,6 @@ function updateOrbHover(){
   orbOverCell = hoverIndex !== -1;
 
   if(orbOverCell && cellRect){
-    // Компенсируем расширение орба (56px -> 72px), чтобы центр не дёргался
     if(!wasOver){
       const delta = (72 - 56) / 2;
       orbEl.style.left = (orbRect.left - delta) + 'px';
@@ -950,15 +945,13 @@ function updateOrbHover(){
 
     const imgUrl = state.board[hoverIndex]?.img;
     if(imgUrl){
-      const lensSize = 72; // целевой диаметр орба в режиме линзы
+      const lensSize = 72;
       const bgW = cellRect.width * LENS_ZOOM;
       const bgH = cellRect.height * LENS_ZOOM;
 
-      // Позиция центра орба внутри ячейки
       const relX = cx - cellRect.left;
       const relY = cy - cellRect.top;
 
-      // Смещение фона так, чтобы точка под центром орба оказалась строго в центре линзы
       const bgX = -(relX * LENS_ZOOM - lensSize / 2);
       const bgY = -(relY * LENS_ZOOM - lensSize / 2);
 
