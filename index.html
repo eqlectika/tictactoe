@@ -47,12 +47,12 @@
   }
   .logo{
     font-family:'Cinzel',serif;font-weight:700;
-    font-size:clamp(20px,5.5vw,30px);letter-spacing:.24em;
+    font-size:clamp(16px,4.5vw,24px);letter-spacing:.24em;
     color:var(--gold);
     text-shadow:0 0 24px #d4af3744;
   }
   .tagline{
-    font-size:clamp(9px,2.4vw,11px);
+    font-size:clamp(10px,2.6vw,12px);
     letter-spacing:.3em;text-transform:uppercase;
     color:var(--dim);margin-top:6px;font-weight:300;
   }
@@ -85,8 +85,8 @@
   /* ============ HINT (collapsible) ============ */
   .hint{
     margin:14px auto 0;
-    max-width:460px;
-    font-size:clamp(10px,2.5vw,12px);
+    max-width:768px;
+    font-size:clamp(14px,3.0vw,14px);
     color:#a89e8a;line-height:1.6;
     padding:10px 16px;
     border:1px dashed var(--gold-line);
@@ -279,8 +279,18 @@
     letter-spacing:.15em;color:var(--dim);margin-top:6px;
     line-height:1.6;
   }
-  .craft a{color:var(--dim);text-decoration:none;border-bottom:1px solid #ffffff22}
-  .craft a:hover{color:var(--gold)}
+.craft a{
+  color:var(--gold);
+  text-decoration:none;
+  border-bottom:1px solid var(--gold-line);
+  text-shadow:0 0 12px #d4af3755;
+  transition:color .2s ease, border-color .2s ease, text-shadow .2s ease;
+}
+.craft a:hover{
+  color:#f5d76e;
+  border-bottom-color:var(--gold);
+  text-shadow:0 0 18px #d4af3799; 
+}
   .manifesto{
     margin-top:8px;font-style:italic;
     font-size:clamp(10px,2.4vw,12px);
@@ -363,7 +373,7 @@
 <body>
 
 <header>
-  <div class="logo">GALLERY·TAC</div>
+  <div class="logo">TIC-TAC-TOE·GALLERY</div>
   <div class="tagline" data-i18n="tagline">A Game in Pictures</div>
 
   <nav class="lang-bar" aria-label="Language">
@@ -399,11 +409,11 @@
   <div class="craft" data-i18n="craft">
     Creative Web Development · Interactive Experiences · Progressive Web Apps
   </div>
-  <div class="craft"><a href="https://eqlectika.github.io" target="_blank" rel="noopener">eqlectika.github.io</a></div>
-  <div class="manifesto" data-i18n="manifesto">"Websites don’t have to be static."</div>
+  <div class="craft"><a href="https://eqlectika.github.io/match.html" target="_blank" rel="noopener">eqlectika.github.io</a></div>
+  <div class="manifesto" data-i18n="manifesto">"The world is made of language"</div>
 </footer>
 
-<div class="orb" id="orb" style="right:16px;top:16px;">
+<div class="orb" id="orb" style="right:64px;top:64px;">
   <img id="orbIcon" src="refresh.png" alt="↻">
 </div>
 
@@ -428,7 +438,7 @@ const I18N = {
   en: {
     dir: 'ltr',
     tagline: 'A Game in Pictures',
-    hint: '<b>Tip:</b> Drag the round orb anywhere on screen. When it hovers over a cell, it turns into a <img class="icon-inline" alt="?"> magnifier. Tap it — the picture opens full-screen. Tap the picture again to fold it back into its cell and continue the game.',
+    hint: '<b>Tip:</b> Drag the round orb anywhere on screen. When it hovers over a cell, it turns into a magnifier. Tap it — the picture opens full-screen. Tap the picture again to fold it back into its cell and continue the game.',
     turnX: 'YOUR TURN',
     turnO: 'COMPUTER',
     win: '✦ YOU WIN ✦',
@@ -436,12 +446,12 @@ const I18N = {
     draw: 'DRAW',
     tapToClose: 'Tap to close',
     craft: 'Creative Web Development · Interactive Experiences · Progressive Web Apps',
-    manifesto: '"Websites don’t have to be static."'
+    manifesto: '"The world is made of language"'
   },
   ru: {
     dir: 'ltr',
     tagline: 'Игра в картинках',
-    hint: '<b>Подсказка:</b> Перетаскивайте круглый орб по экрану. Над ячейкой он превращается в <img class="icon-inline" alt="?"> лупу. Тапните по лупе — картинка откроется во весь экран. Тап по картинке снова свернёт её в ячейку, и партия продолжится.',
+    hint: '<b>Подсказка:</b> Перетаскивайте круглый орб по экрану. Над ячейкой он превращается в лупу. Тапните по лупе — картинка откроется во весь экран. Тап по картинке снова свернёт её в ячейку, и партия продолжится.',
     turnX: 'ВАШ ХОД',
     turnO: 'КОМПЬЮТЕР',
     win: '✦ ВЫ ПОБЕДИЛИ ✦',
@@ -454,7 +464,7 @@ const I18N = {
   ar: {
     dir: 'rtl',
     tagline: 'لعبة بالصور',
-    hint: '<b>نصيحة:</b> اسحب الكرة الدائرية إلى أي مكان على الشاشة. عندما تمر فوق خلية، تتحول إلى <img class="icon-inline" alt="?"> عدسة مكبّرة. انقر عليها — تُفتح الصورة بملء الشاشة. انقر على الصورة مرة أخرى لتُطوى في خليتها وتستمر اللعبة.',
+    hint: '<b>نصيحة:</b> اسحب الكرة الدائرية إلى أي مكان على الشاشة. عندما تمر فوق خلية، تتحول إلى عدسة مكبّرة. انقر عليها — تُفتح الصورة بملء الشاشة. انقر على الصورة مرة أخرى لتُطوى في خليتها وتستمر اللعبة.',
     turnX: 'دورك',
     turnO: 'الكمبيوتر',
     win: '✦ لقد فزت ✦',
@@ -467,7 +477,7 @@ const I18N = {
   zh: {
     dir: 'ltr',
     tagline: '图画的游戏',
-    hint: '<b>提示：</b>将圆形球拖到屏幕任意位置。悬停在格子上方时，它会变成 <img class="icon-inline" alt="?"> 放大镜。点击它，图片会全屏打开。再次点击图片即可折叠回格子，游戏继续。',
+    hint: '<b>提示：</b>将圆形球拖到屏幕任意位置。悬停在格子上方时，它会变成 放大镜。点击它，图片会全屏打开。再次点击图片即可折叠回格子，游戏继续。',
     turnX: '轮到你了',
     turnO: '电脑',
     win: '✦ 你赢了 ✦',
@@ -773,9 +783,19 @@ let orbOverCell = false;
 let currentHoverIndex = -1;
 
 function initOrbPosition(){
-  const r = orbEl.getBoundingClientRect();
-  orbEl.style.left = (window.innerWidth - r.width - 16) + 'px';
-  orbEl.style.top  = '16px';
+  const orbRect = orbEl.getBoundingClientRect();
+  const targetEl = statusEl || document.getElementById('hud');
+  const targetRect = targetEl.getBoundingClientRect();
+
+  const offsetY = 48; // положительное значение сдвигает ниже, отрицательное — выше
+  const centerX = targetRect.left + targetRect.width / 2 - orbRect.width / 2;
+  const aboveY  = targetRect.top - orbRect.height + offsetY;
+
+  const x = Math.min(Math.max(8, centerX), window.innerWidth - orbRect.width - 8);
+  const y = Math.min(Math.max(8, aboveY),  window.innerHeight - orbRect.height - 8);
+
+  orbEl.style.left  = x + 'px';
+  orbEl.style.top   = y + 'px';
   orbEl.style.right = 'auto';
 }
 initOrbPosition();
