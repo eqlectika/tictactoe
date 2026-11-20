@@ -51,13 +51,14 @@ body{
     overflow-x:hidden;
   }
 
-  header{
-    position:relative;
-    z-index:10;
-    text-align:center;
-    padding:calc(env(safe-area-inset-top, 0px) + 32px) 16px clamp(4px,1vh,8px);
-    flex-shrink:0;
-  }
+header{
+  position:relative;
+  z-index:20;
+  text-align:center;
+  padding:calc(env(safe-area-inset-top, 0px) + 44px) 16px clamp(4px,1vh,8px);
+  flex-shrink:0;
+}
+
 
   body[dir="rtl"] .hint{ text-align:center; }
 
@@ -320,8 +321,8 @@ body{
     position:fixed;z-index:150;
     width:56px;height:56px;border-radius:50%;
     background:transparent;
-    backdrop-filter:blur(2px);
-    -webkit-backdrop-filter:blur(2px);
+    backdrop-filter:blur(1px);
+    -webkit-backdrop-filter:blur(1px);
     border:1px solid rgba(212, 175, 55, 0.45);
     display:flex;align-items:center;justify-content:center;
     cursor:grab;touch-action:none;user-select:none;
@@ -329,7 +330,7 @@ body{
     outline:none;
     opacity:1;
     transition:width .22s ease, height .22s ease, background .2s ease, border-color .2s ease, box-shadow .2s ease;
-    box-shadow:mone;
+    box-shadow:none;
     overflow:hidden;
   }
   .orb:active{cursor:grabbing}
@@ -611,7 +612,8 @@ function applyLang(lang){
 
   const wasCollapsed = hintEl.classList.contains('collapsed');
   hintInner.innerHTML = pack.hint;
-  updateHintState(wasCollapsed ? false : true);
+updateHintState(!wasCollapsed);
+
 
   document.querySelectorAll('.lang-btn').forEach(b => {
     b.classList.toggle('active', b.dataset.lang === lang);
@@ -1031,6 +1033,12 @@ window.addEventListener('scroll', updateOrbHover, {passive:true});
   updateHintState(!hintCollapsed);
   newGame();
 })();
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').catch(() => {});
+  });
+}
+
 </script>
 </body>
 </html>
