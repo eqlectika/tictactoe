@@ -59,9 +59,9 @@ header{
   flex-shrink:0;
 }
 
-
   body[dir="rtl"] .hint{ text-align:center; }
 
+  /* Заголовок (.logo) оставлен без увеличения */
   .logo{
     margin-top: 12px;
     font-family:'Cinzel',serif;font-weight:700;
@@ -70,7 +70,7 @@ header{
     text-shadow:0 0 24px #d4af3744;
   }
   .tagline{
-    font-size:clamp(10px,2.6vw,12px);
+    font-size:clamp(12px,4vw,15px);
     letter-spacing:.3em;text-transform:uppercase;
     color:var(--dim);margin-top:6px;font-weight:300;
   }
@@ -81,6 +81,7 @@ header{
     flex-wrap:wrap;
     direction: ltr;
   }
+  /* Кнопки языка (.lang-btn) оставлены без увеличения */
   .lang-btn{
     padding:7px 14px;
     border-radius:8px;
@@ -106,7 +107,7 @@ header{
   .hint{
     margin:14px auto 0;
     max-width:768px;
-    font-size:clamp(13px,3.0vw,14px);
+    font-size:clamp(16px,4vw,17px);
     color:#a89e8a;line-height:1.6;
     padding:10px 16px;
     border:none;
@@ -138,7 +139,7 @@ header{
   .hint .hint-toggle{
     position:absolute;
     top:50%;left:50%;transform:translate(-50%,-50%);
-    font-size:14px;letter-spacing:.4em;
+    font-size:17px;letter-spacing:.4em;
     color:var(--gold);
     opacity:0;transition:opacity .25s ease;
     pointer-events:none;
@@ -162,7 +163,7 @@ header{
   /* ============ HUD ============ */
   .hud{
     display:flex;align-items:center;justify-content:center;gap:clamp(10px,4vw,20px);
-    padding:6px 16px;font-size:clamp(10px,2.6vw,12px);
+    padding:6px 16px;font-size:clamp(12px,4vw,15px);
     letter-spacing:.15em;text-transform:uppercase;
     color:var(--dim);flex-shrink:0;
   }
@@ -291,11 +292,11 @@ header{
   }
   .brand{
     font-family:'Cinzel',serif;font-weight:700;
-    font-size:clamp(10px,2.8vw,13px);
+    font-size:clamp(12px,4vw,16px);
     letter-spacing:.32em;color:var(--gold);
   }
   .craft{
-    font-size:clamp(9px,2.3vw,11px);
+    font-size:clamp(11px,3vw,14px);
     letter-spacing:.15em;color:var(--dim);margin-top:6px;
     line-height:1.6;
   }
@@ -313,7 +314,7 @@ header{
 }
   .manifesto{
     margin-top:8px;font-style:italic;
-    font-size:clamp(10px,2.4vw,12px);
+    font-size:clamp(12px,3vw,15px);
     color:#a89e8a;letter-spacing:.05em;
   }
 
@@ -423,7 +424,7 @@ header{
   }
   .lightbox .lb-hint{
     position:absolute;bottom:24px;left:50%;transform:translateX(-50%);
-    font-size:11px;letter-spacing:.15em;text-transform:uppercase;
+    font-size:14px;letter-spacing:.15em;text-transform:uppercase;
     color:var(--dim);pointer-events:none;
   }
 
@@ -434,13 +435,14 @@ header{
   @media (max-height:600px){
     :root{--cell-size:min(20vw,18vh,90px)}
     header{padding:6px 12px 2px}
+    /* .logo не меняется */
     .logo{font-size:18px;letter-spacing:.2em}
     .tagline{display:none}
-    .hint{font-size:9px;padding:6px 10px;margin-top:8px;max-height:220px}
+    .hint{font-size:11px;padding:6px 10px;margin-top:8px;max-height:220px}
     .hint.collapsed{max-height:28px}
     .rule{margin-top:6px}
     footer{padding:8px 12px}
-    .craft, .manifesto{font-size:9px;margin-top:4px}
+    .craft, .manifesto{font-size:11px;margin-top:4px}
   }
   .ios-blur-fix{
     position:fixed;
@@ -545,7 +547,7 @@ const I18N = {
     draw: 'НИЧЬЯ',
     tapToClose: 'Тап — закрыть',
     craft: 'Веб-разработка · Интерактивные эксперименты · Progressive Web Apps',
-    manifesto: '«Сайты не обязаны быть статичными.»'
+    manifesto: '«Мир состоит из языка»'
   },
   ar: {
     dir: 'rtl',
@@ -558,7 +560,7 @@ const I18N = {
     draw: 'تعادل',
     tapToClose: 'انقر للإغلاق',
     craft: 'تطوير ويب إبداعي · تجارب تفاعلية · تطبيقات ويب تقدمية',
-    manifesto: '«لا يجب أن تكون المواقع ثابتة.»'
+    manifesto: '«لا يجب أن تكون المواقع ثابتةالعالم مكوّن من اللغة»'
   },
   zh: {
     dir: 'ltr',
@@ -571,7 +573,7 @@ const I18N = {
     draw: '平局',
     tapToClose: '点击关闭',
     craft: '创意网页开发 · 互动体验 · 渐进式网页应用',
-    manifesto: '“网站不必是静态的。”'
+    manifesto: '“世界由语言构成”'
   }
 };
 
@@ -623,8 +625,7 @@ function applyLang(lang){
 
   const wasCollapsed = hintEl.classList.contains('collapsed');
   hintInner.innerHTML = pack.hint;
-updateHintState(!wasCollapsed);
-
+  updateHintState(!wasCollapsed);
 
   document.querySelectorAll('.lang-btn').forEach(b => {
     b.classList.toggle('active', b.dataset.lang === lang);
@@ -815,7 +816,6 @@ function aiMove(){
   render();
   checkEnd();
 }
-
 
 function findWinningMove(owner){
   for(const line of WINS){
