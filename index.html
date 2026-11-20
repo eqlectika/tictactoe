@@ -441,11 +441,21 @@ header{
     footer{padding:8px 12px}
     .craft, .manifesto{font-size:9px;margin-top:4px}
   }
+  .ios-blur-fix{
+    position:fixed;
+    top:0;
+    left:0;
+    right:0;
+    height:12px;
+    z-index:2147483647;
+    pointer-events:none;
+    background:var(--bg);
+  }
 
 </style>
 </head>
 <body>
-
+  <div class="ios-blur-fix"></div>
 <header>
   <div class="logo">GALLERY+TIC-TAC-TOE</div>
   <div class="tagline" data-i18n="tagline">A Game in Pictures</div>
@@ -787,11 +797,15 @@ function onCellClick(i){
 function aiMove(){
   if(state.over) return;
 
+  const free = state.board
+    .map((c, i) => (c.owner ? null : i))
+    .filter(i => i !== null);
+
   let move = findWinningMove('O')
           ?? findWinningMove('X')
           ?? (!state.board[4].owner ? 4 : null)
           ?? [0,2,6,8].find(i => !state.board[i].owner)
-          ?? state.board.map((c,i)=>c.owner?null:i).filter(i=>i!==null)[Math.floor(Math.random()*4)];
+          ?? free[Math.floor(Math.random() * free.length)];
 
   if(move == null) return;
   state.board[move].owner = 'O';
@@ -800,6 +814,7 @@ function aiMove(){
   render();
   checkEnd();
 }
+
 
 function findWinningMove(owner){
   for(const line of WINS){
