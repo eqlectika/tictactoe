@@ -1,4 +1,4 @@
-const CACHE_NAME = 'gallery-ttt-v2';
+const CACHE_NAME = 'gallery-ttt-v3';
 
 const CORE_ASSETS = [
   './',
